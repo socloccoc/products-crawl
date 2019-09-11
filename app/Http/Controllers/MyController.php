@@ -27,7 +27,7 @@ class MyController extends Controller
     public function export()
     {
         ini_set('max_execution_time', 0);
-        $stores = Store::where('id', '<', 50)->get();
+        $stores = Store::where('id', '<', 3)->get();
         if (count($stores) == 0) {
             return redirect('/importExportView')->with('error_message', 'Không tìm thấy store, vui lòng import store sau đó thử lại !');
         }
@@ -54,22 +54,32 @@ class MyController extends Controller
             }
         }
 
-        $prs = [];
-        if (count($data) > 0) {
-            foreach ($data as $item) {
-                if (count($item) > 0) {
-                    foreach ($item as $pr) {
-                        $prs[] = $pr;
-                    }
-                }
-            }
+//        $prs = [];
+//        if (count($data) > 0) {
+//            foreach ($data as $item) {
+//                if (count($item) > 0) {
+//                    foreach ($item as $pr) {
+//                        $prs[] = $pr;
+//                    }
+//                }
+//            }
+//        }
+//        $header = $this->getHeader();
+//        $dataExcel = new ProductsExport([$prs], $header);
+//
+//        $excel = Excel::download($dataExcel, "products-" . Carbon::now()->format('Y-m-d-his') . ".xlsx");
+//
+//        return $excel;
+    }
+
+    public function getProductDetail($url, $name){
+        $crawler = new Crawler($this->crawlData($url));
+        $productDetail = $this->get_string_between($crawler->html(), 'window.__INITIAL_STATE__ = ', ',"meta":{}}').'}';
+        $productDetail = \GuzzleHttp\json_decode($productDetail, true);
+        foreach ($productDetail['vias']['Product']['docs'] as $detail){
+            dd($detail);
+            $productName = $name.' '.$detail['doc']['name'];
         }
-        $header = $this->getHeader();
-        $dataExcel = new ProductsExport([$prs], $header);
-
-        $excel = Excel::download($dataExcel, "products-" . Carbon::now()->format('Y-m-d-his') . ".xlsx");
-
-        return $excel;
     }
 
     /**
@@ -97,7 +107,8 @@ class MyController extends Controller
             $crawler->filterXPath('//div[@class="ui three doubling product cards m-t-0"]/div')->each(function ($node) use (&$url, &$categoryName, &$products) {
                 $productUrl = $url . $node->filter('a')->attr('href');
                 $productName = $node->filter('span')->text();
-                $products[] = [$categoryName, $productUrl, $productName];
+                $this->getProductDetail($productUrl, $productName);
+//                $products[] = [$categoryName, $productUrl, $productName];
             });
         }
         return $products;
@@ -161,5 +172,14 @@ class MyController extends Controller
             'ProductUrl',
             'ProductName'
         ];
+    }
+
+    public function get_string_between($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string, $ini, $len);
     }
 }
