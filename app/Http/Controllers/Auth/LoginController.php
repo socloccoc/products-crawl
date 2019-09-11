@@ -25,7 +25,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/spam';
+    protected $redirectTo = '/importExportView';
 
     /**
      * Create a new controller instance.
