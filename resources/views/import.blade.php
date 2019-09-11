@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Product data collection system</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
-</head>
-<body>
+@extends('layouts.app')
 
+@section('content')
 <div class="container">
     <div class="card bg-light mt-3">
         <div class="card-header">
@@ -26,5 +21,4 @@
     </div>
 </div>
 
-</body>
-</html>
+@endsection
