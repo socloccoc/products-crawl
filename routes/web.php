@@ -23,9 +23,9 @@ Route::get('export', 'MyController@export')->name('export');
 Route::get('importExportView', 'MyController@importExportView');
 Route::post('import', 'MyController@import')->name('import');
 
-Route::match(['get', 'post'], 'register', function () {
-    return redirect('/login');
-});
+//Route::match(['get', 'post'], 'register', function () {
+//    return redirect('/login');
+//});
 
 Route::match(['get', 'post'], 'password/reset', function () {
     return redirect('/login');
